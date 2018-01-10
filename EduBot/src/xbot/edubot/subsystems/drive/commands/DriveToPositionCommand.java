@@ -8,6 +8,8 @@ import xbot.edubot.subsystems.drive.DriveSubsystem;
 public class DriveToPositionCommand extends BaseCommand {
 
 	DriveSubsystem drive;
+	double position;
+	double x;
 	
 	@Inject
 	public DriveToPositionCommand(DriveSubsystem driveSubsystem) {
@@ -22,23 +24,39 @@ public class DriveToPositionCommand extends BaseCommand {
 	@Override
 	public void initialize() {
 		// If you have some one-time setup, do it here.
+		 x = position - drive.distanceSensor.getDistance();
 	}
 
 	@Override
 	public void execute() {
+		double a = 1;
+		double b = 1;
+		if (x < .5) {
+			a = -1;
+			b = -1;
+		}
+		
+		drive.tankDrive(a, b);
+		}
+		
 		// Here you'll need to figure out a technique that:
 		// - Gets the robot to move to the target position 
 		// - Hint: use drive.distanceSensor.get() to find out where you are
 		// - Gets the robot stop (or at least be moving really really slowly) at the target position
 		
 		// How you do this is up to you. If you get stuck, ask a mentor or student for some hints!
-	}
+	
 	
 	@Override
 	public boolean isFinished() {
 		// Modify this to return true once you have met your goal, 
 		// and you're moving fairly slowly (ideally stopped)
-		return false;
+		if(drive.distanceSensor.getDistance() == 0) {
+		return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 }
