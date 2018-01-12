@@ -38,25 +38,22 @@ public class DriveToPositionCommand extends BaseCommand {
 			b = 1.0;
 		}
 		if (x < goal/1.0526) {
-			a = .50;
-			b = .50;
+			a = .54;
+			b = .54;
 		}
 		if (x < goal/1.25) {
 			a = -0.50;
 			b = -0.50;
 		}
 		if (x < goal/1.5) {
-			a = .028;
-			b = .028;
+			a = .05;
+			b = .05;
 		}
 		if (x < goal/2.5) {
 			a = .00;
 			b = .00;
 		}
-		if (x < goal/4) {
-			a = 0.0;
-			b = 0.0;
-		}
+
 		if (goal < drive.distanceSensor.getDistance()) {
 			a = 0.0;
 			b = 0.0;
