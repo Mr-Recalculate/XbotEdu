@@ -9,7 +9,7 @@ public class DriveToPositionCommand extends BaseCommand {
 
 	DriveSubsystem drive;
 	double goal;
-	double x;
+	double error;
 	boolean isFinished;
 	
 	@Inject
@@ -31,36 +31,13 @@ public class DriveToPositionCommand extends BaseCommand {
 	@Override
 	public void execute() {
 		double a = 1.0;
-		double b = 1.0;
-		x = goal - drive.distanceSensor.getDistance();
-		if (x < goal/1.02) {
-			a = 1.0;
-			b = 1.0;
-		}
-		if (x < goal/1.0526) {
-			a = .54;
-			b = .54;
-		}
-		if (x < goal/1.25) {
-			a = -0.50;
-			b = -0.50;
-		}
-		if (x < goal/1.5) {
-			a = .05;
-			b = .05;
-		}
-		if (x < goal/2.5) {
-			a = .00;
-			b = .00;
-		}
-
-		if (goal < drive.distanceSensor.getDistance()) {
-			a = 0.0;
-			b = 0.0;
-		}
-		drive.tankDrive(a, b);
+		double oldError = error;
+		error = goal - drive.distanceSensor.getDistance();
+		a = .528 * error - 2.999* (oldError - error);
+		drive.tankDrive(a, a);
+		oldError = error;
 	
-		if(drive.distanceSensor.getDistance() >= goal) {
+		if(drive.distanceSensor.getDistance() >= goal -.01 && drive.distanceSensor.getDistance() <= goal + .01) {
 			isFinished = true;
 		}
 		else {

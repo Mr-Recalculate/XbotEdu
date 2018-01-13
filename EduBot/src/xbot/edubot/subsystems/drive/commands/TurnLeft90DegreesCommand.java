@@ -11,8 +11,9 @@ public class TurnLeft90DegreesCommand extends BaseCommand {
 	DriveSubsystem drive;
 	MockHeadingSensor gyro;
 
-	double x;
-	double y;
+	double goal;
+	double error;
+	boolean isFinished;
 	
 	@Inject
 	public TurnLeft90DegreesCommand(DriveSubsystem driveSubsystem) {
@@ -22,21 +23,37 @@ public class TurnLeft90DegreesCommand extends BaseCommand {
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-		x = drive.gyro.getYaw() + 90;
-		if (x > 180) {
-			x -= 360;
+		goal = drive.gyro.getYaw() + 90;
+		if (goal > 180) {
+			goal -= 360;
 		}
 	}
 
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		y = (1/90) * (x - drive.gyro.getYaw());
-		double a = -1 * y;
-		double b = 1 * y;
-			drive.tankDrive(a, b);
- 	}
+		double oldError = error;
+		error = goal - drive.gyro.getYaw();
+		double a = .5 * error - 2* (oldError - error);
+		drive.tankDrive(-a, a);
+		oldError = error;
+		if (drive.gyro.getYaw() > goal - .25 && drive.gyro.getYaw() < goal + .25) {
+			isFinished = true;
+		}
+		else {
+			isFinished = false;
+		}
 
-
-
+	}
+	
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		if(isFinished) {
+			return true;
+			}
+			else {
+				return false;
+			}
+	}
 }
